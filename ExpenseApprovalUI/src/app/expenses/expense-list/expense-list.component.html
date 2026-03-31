@@ -1,0 +1,75 @@
+<div class="expense-list">
+  <div class="page-header">
+    <h2>Expenses</h2>
+    <a routerLink="/expenses/new" class="btn-new">+ New Expense</a>
+  </div>
+
+  <div class="filters-panel">
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="filters.status" (change)="applyFilters()">
+        <option value="">All</option>
+        @for (s of statusOptions; track s) {
+            <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <input type="text" [(ngModel)]="filters.category" placeholder="Category" />
+    </div>
+    <div class="filter-group">
+      <label>From</label>
+      <input type="date" [(ngModel)]="filters.fromDate" />
+    </div>
+    <div class="filter-group">
+      <label>To</label>
+      <input type="date" [(ngModel)]="filters.toDate" />
+    </div>
+    <div class="filter-actions">
+      <button class="btn-filter" (click)="applyFilters()">Filter</button>
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading">Loading expenses...</div>
+  } @else if (expenses.length === 0) {
+    <div class="empty">
+      <p>No expenses found.</p>
+      <a routerLink="/expenses/new">Create your first expense</a>
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (exp of expenses; track exp.id) {
+            <tr>
+              <td>{{ exp.id }}</td>
+              <td>{{ exp.description }}</td>
+              <td class="amount">\${{ exp.amount | number:'1.2-2' }}</td>
+              <td>{{ exp.expenseDate | date:'mediumDate' }}</td>
+              <td><span class="status-badge" [class]="getStatusClass(exp.status)">{{ exp.status }}</span></td>
+              <td class="actions">
+                <a [routerLink]="['/expenses', exp.id]" class="btn-view">View</a>
+                @if (exp.status === 'Pending') {
+                  <a [routerLink]="['/expenses', exp.id, 'edit']" class="btn-edit">Edit</a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,88 @@
+<div class="expense-form-page">
+  <a routerLink="/expenses" class="back-link">← Back to Expenses</a>
+  <h2>{{ isEdit ? 'Edit Expense' : 'New Expense' }}</h2>
+
+  @if (pageLoading) {
+    <div class="loading">Loading...</div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-card">
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          placeholder="Describe the expense..."
+          [class.invalid]="f['description'].touched && f['description'].invalid"
+        ></textarea>
+        @if (f['description'].touched && f['description'].errors) {
+          <div class="error-text">
+            @if (f['description'].errors['required']) { Description is required. }
+            @else if (f['description'].errors['maxlength']) { Maximum 500 characters. }
+          </div>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="amount">Amount ($)</label>
+          <input
+            id="amount"
+            type="number"
+            formControlName="amount"
+            step="0.01"
+            placeholder="0.00"
+            [class.invalid]="f['amount'].touched && f['amount'].invalid"
+          />
+          @if (f['amount'].touched && f['amount'].errors) {
+            <div class="error-text">
+              @if (f['amount'].errors['required']) { Amount is required. }
+              @else if (f['amount'].errors['min']) { Amount must be greater than 0. }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="expenseDate">Date</label>
+          <input
+            id="expenseDate"
+            type="date"
+            formControlName="expenseDate"
+            [class.invalid]="f['expenseDate'].touched && f['expenseDate'].invalid"
+          />
+          @if (f['expenseDate'].touched && f['expenseDate'].errors) {
+            <div class="error-text">Date is required.</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <input
+          id="categoryId"
+          type="text"
+          formControlName="categoryId"
+          placeholder="e.g. Travel"
+          [class.invalid]="f['categoryId'].touched && f['categoryId'].invalid"
+        />
+        @if (f['categoryId'].touched && f['categoryId'].errors) {
+          <div class="error-text">
+            @if (f['categoryId'].errors['required']) { Category is required. }
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner"></span>
+            Saving...
+          } @else {
+            {{ isEdit ? 'Update Expense' : 'Create Expense' }}
+          }
+        </button>
+        <a routerLink="/expenses" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  }
+</div>

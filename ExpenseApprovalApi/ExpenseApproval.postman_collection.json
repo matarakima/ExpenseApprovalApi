@@ -1,0 +1,374 @@
+﻿{
+  "info": {
+    "name": "Expense Approval API",
+    "description": "Complete collection for the Expense Approval microservices: Auth, Users, Roles, and Expenses.\n\nUse the environment files to switch between Local and Docker execution.\n\nThe `access_token` variable is set automatically after calling the Login endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "expense_id",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    },
+    {
+      "key": "role_id",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    },
+    {
+      "key": "category_id",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints.",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', json.accessToken);",
+                  "    pm.test('Login successful', function () {",
+                  "        pm.expect(json.accessToken).to.be.a('string');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"YourPassword123!\"\n}"
+            },
+            "description": "Authenticates a user via Auth0 and returns a JWT access token.\n\nThe test script automatically sets the `access_token` collection variable on success."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints.",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Retrieves all registered users.\n\nRequired permission: `users:list`"
+          }
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "{{user_id}}"]
+            },
+            "description": "Retrieves a single user by their unique identifier.\n\nRequired permission: `users:read`"
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"auth0Id\": \"auth0|abc123\",\n  \"email\": \"newuser@example.com\",\n  \"fullName\": \"New User\",\n  \"roleId\": \"{{role_id}}\"\n}"
+            },
+            "description": "Creates a new user in the system.\n\nRequired permission: `users:create`"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "description": "Role management endpoints.",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            },
+            "description": "Retrieves all available roles with their associated claims.\n\nRequired permission: `roles:list`"
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Viewer\"\n}"
+            },
+            "description": "Creates a new role in the system.\n\nRequired permission: `roles:create`"
+          }
+        },
+        {
+          "name": "Add Claim to Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/roles/{{role_id}}/claims",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles", "{{role_id}}", "claims"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"claimValue\": \"expenses:list\"\n}"
+            },
+            "description": "Adds a permission claim to the specified role.\n\nRequired permission: `roles:add-claim`"
+          }
+        },
+        {
+          "name": "Remove Claim from Role",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/roles/{{role_id}}/claims/expenses:list",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles", "{{role_id}}", "claims", "expenses:list"]
+            },
+            "description": "Removes a permission claim from the specified role.\n\nRequired permission: `roles:remove-claim`"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Expenses",
+      "description": "Expense request management endpoints.",
+      "item": [
+        {
+          "name": "Get All Expenses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses"]
+            },
+            "description": "Retrieves all expense requests.\n\nRequired permission: `expenses:list`"
+          }
+        },
+        {
+          "name": "Get Expense By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/{{expense_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "{{expense_id}}"]
+            },
+            "description": "Retrieves a single expense request by its unique identifier.\n\nRequired permission: `expenses:read`"
+          }
+        },
+        {
+          "name": "Filter Expenses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/filter?status=Pending&category=&fromDate=&toDate=",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "filter"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending",
+                  "description": "Filter by status: Pending, Approved, Rejected"
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Filter by category name"
+                },
+                {
+                  "key": "fromDate",
+                  "value": "",
+                  "description": "Start date (yyyy-MM-dd)"
+                },
+                {
+                  "key": "toDate",
+                  "value": "",
+                  "description": "End date (yyyy-MM-dd)"
+                }
+              ]
+            },
+            "description": "Filters expense requests by status, category, and/or date range.\n\nRequired permission: `expenses:filter`"
+          }
+        },
+        {
+          "name": "Get Expense Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "metrics"]
+            },
+            "description": "Gets aggregated expense metrics: total requests, approved/rejected/pending counts, and total approved amount.\n\nRequired permission: `expenses:metrics`"
+          }
+        },
+        {
+          "name": "Create Expense",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/expenses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"description\": \"Office supplies purchase\",\n  \"amount\": 150.75,\n  \"expenseDate\": \"2026-03-31T00:00:00\"\n}"
+            },
+            "description": "Creates a new expense request.\n\nRequired permission: `expenses:create`"
+          }
+        },
+        {
+          "name": "Update Expense",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/{{expense_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "{{expense_id}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"description\": \"Updated office supplies\",\n  \"amount\": 200.00,\n  \"expenseDate\": \"2026-03-31T00:00:00\"\n}"
+            },
+            "description": "Updates an existing expense request.\n\nRequired permission: `expenses:edit`"
+          }
+        },
+        {
+          "name": "Approve Expense",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/{{expense_id}}/approve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "{{expense_id}}", "approve"]
+            },
+            "description": "Approves a pending expense request.\n\nRequired permission: `expenses:approve`"
+          }
+        },
+        {
+          "name": "Reject Expense",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/expenses/{{expense_id}}/reject",
+              "host": ["{{base_url}}"],
+              "path": ["api", "expenses", "{{expense_id}}", "reject"]
+            },
+            "description": "Rejects a pending expense request.\n\nRequired permission: `expenses:reject`"
+          }
+        }
+      ]
+    }
+  ]
+}

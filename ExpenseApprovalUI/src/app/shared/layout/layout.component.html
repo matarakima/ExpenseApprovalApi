@@ -1,0 +1,17 @@
+<div class="layout">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a routerLink="/dashboard">Expense Approval</a>
+    </div>
+    <button class="menu-toggle" (click)="toggleMenu()">☰</button>
+    <div class="nav-links" [class.open]="menuOpen">
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="menuOpen = false">Dashboard</a>
+      <a routerLink="/expenses" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false">Expenses</a>
+      <a routerLink="/expenses/new" routerLinkActive="active" (click)="menuOpen = false">New Expense</a>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

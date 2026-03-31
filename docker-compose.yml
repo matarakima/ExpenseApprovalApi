@@ -1,0 +1,91 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Password*2025*"
+    ports:
+      - "1433:1433"
+    networks:
+      - expense-network
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  expense-api:
+    build:
+      context: ./ExpenseApprovalApi
+      dockerfile: src/Presentation/ExpenseApproval.Api/Dockerfile
+    container_name: expense-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      VAULT_URL: ${VAULT_URL:-}
+      CONNECTION_STRING: "Server=sqlserver,1433;Database=ExpenseApprovalDb;User Id=sa;Password=Password*2025*;TrustServerCertificate=True;"
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+    ports:
+      - "5001:8080"
+    depends_on:
+      - sqlserver
+    networks:
+      - expense-network
+
+  expense-user:
+    build:
+      context: ./ExpenseApprovalApi
+      dockerfile: src/Presentation/ExpenseApproval.User/Dockerfile
+    container_name: expense-user
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      VAULT_URL: ${VAULT_URL:-}
+      CONNECTION_STRING: "Server=sqlserver,1433;Database=ExpenseApprovalDb;User Id=sa;Password=Password*2025*;TrustServerCertificate=True;"
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
+    ports:
+      - "5002:8080"
+    depends_on:
+      - sqlserver
+    networks:
+      - expense-network
+
+  expense-gateway:
+    build:
+      context: ./ExpenseApprovalApi
+      dockerfile: src/Presentation/ExpenseApproval.Gateway/Dockerfile
+    container_name: expense-gateway
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      VAULT_URL: ${VAULT_URL:-}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+    ports:
+      - "5000:8080"
+    depends_on:
+      - expense-api
+      - expense-user
+    networks:
+      - expense-network
+    volumes:
+      - ./ExpenseApprovalApi/src/Presentation/ExpenseApproval.Gateway/ocelot.docker.json:/app/ocelot.json:ro
+
+  expense-ui:
+    build:
+      context: ./ExpenseApprovalUI
+      dockerfile: Dockerfile
+    container_name: expense-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - expense-gateway
+    networks:
+      - expense-network
+
+networks:
+  expense-network:
+    name: expense-network
+    driver: bridge
+
+volumes:
+  sqlserver-data:

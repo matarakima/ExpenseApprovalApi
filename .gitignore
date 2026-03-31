@@ -1,0 +1,80 @@
+## ==================
+## .NET (ExpenseApprovalApi)
+## ==================
+
+## Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+publish/
+
+## .NET
+*.csproj.user
+*.vbproj.user
+*.fsproj.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio
+.vs/
+*.rsuser
+
+## NuGet
+**/packages/
+*.nupkg
+**/[Pp]ackages/
+
+## ==================
+## Angular (ExpenseApprovalUI)
+## ==================
+
+## Compiled output
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+## Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+## IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+## Angular cache
+.angular/
+
+## Test & coverage
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+testem.log
+typings/
+
+## ==================
+## Shared
+## ==================
+
+## Environment & secrets
+.env
+*.env.*
+
+## Docker
+docker-compose.override.yml
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Test results
+test-results/

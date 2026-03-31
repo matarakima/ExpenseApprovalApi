@@ -1,0 +1,66 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Expense Approval</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-error">
+        <span class="alert-icon">⚠</span>
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          [class.invalid]="f['email'].touched && f['email'].invalid"
+        />
+        @if (f['email'].touched && f['email'].errors) {
+          <div class="error-text">
+            @if (f['email'].errors['required']) {
+              Email is required.
+            } @else if (f['email'].errors['email']) {
+              Enter a valid email address.
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [class.invalid]="f['password'].touched && f['password'].invalid"
+        />
+        @if (f['password'].touched && f['password'].errors) {
+          <div class="error-text">
+            @if (f['password'].errors['required']) {
+              Password is required.
+            } @else if (f['password'].errors['minlength']) {
+              Password must be at least 6 characters.
+            }
+          </div>
+        }
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="loading">
+        @if (loading) {
+          <span class="spinner"></span>
+          Signing in...
+        } @else {
+          Sign In
+        }
+      </button>
+    </form>
+  </div>
+</div>

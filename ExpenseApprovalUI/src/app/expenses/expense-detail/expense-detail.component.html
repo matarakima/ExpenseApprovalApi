@@ -1,0 +1,49 @@
+<div class="expense-detail">
+  @if (loading) {
+    <div class="loading">Loading expense...</div>
+  } @else if (expense) {
+    <div class="detail-header">
+      <a routerLink="/expenses" class="back-link">← Back to Expenses</a>
+      <h2>Expense #{{ expense.id }}</h2>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-row">
+        <span class="label">Description</span>
+        <span class="value">{{ expense.description }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Amount</span>
+        <span class="value amount">${{ expense.amount | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Date</span>
+        <span class="value">{{ expense.expenseDate | date:'longDate' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Category</span>
+        <span class="value">{{ expense.category }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Status</span>
+        <span class="status-badge" [class]="getStatusClass(expense.status)">{{ expense.status }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Requested By</span>
+        <span class="value">{{ expense.requestedBy }}</span>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      @if (expense.status === 'Pending') {
+        <a [routerLink]="['/expenses', expense.id, 'edit']" class="btn btn-edit">Edit</a>
+        <button class="btn btn-approve" (click)="approve()" [disabled]="actionLoading">
+          @if (actionLoading) { Processing... } @else { ✓ Approve }
+        </button>
+        <button class="btn btn-reject" (click)="reject()" [disabled]="actionLoading">
+          @if (actionLoading) { Processing... } @else { ✕ Reject }
+        </button>
+      }
+    </div>
+  }
+</div>

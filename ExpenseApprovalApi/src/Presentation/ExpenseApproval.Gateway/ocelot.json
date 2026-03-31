@@ -1,0 +1,139 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/users",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/users",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/users/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/roles",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/roles",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}/claims",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}/claims",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}/claims/{claimValue}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7198 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}/claims/{claimValue}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/expenses",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}/approve",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}/approve",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}/reject",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}/reject",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/filter",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/filter",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/metrics",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/metrics",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7291"
+  }
+}

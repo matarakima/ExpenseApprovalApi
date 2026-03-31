@@ -1,0 +1,37 @@
+<div class="dashboard">
+  <h2>Dashboard</h2>
+
+  @if (loading) {
+    <div class="loading">Loading metrics...</div>
+  } @else if (error) {
+    <div class="error-box">{{ error }}</div>
+  } @else if (metrics) {
+    <div class="metrics-grid">
+      <div class="metric-card total">
+        <div class="metric-value">{{ metrics.totalRequests }}</div>
+        <div class="metric-label">Total Requests</div>
+      </div>
+      <div class="metric-card pending">
+        <div class="metric-value">{{ metrics.pendingCount }}</div>
+        <div class="metric-label">Pending</div>
+      </div>
+      <div class="metric-card approved">
+        <div class="metric-value">{{ metrics.approvedCount }}</div>
+        <div class="metric-label">Approved</div>
+      </div>
+      <div class="metric-card rejected">
+        <div class="metric-value">{{ metrics.rejectedCount }}</div>
+        <div class="metric-label">Rejected</div>
+      </div>
+      <div class="metric-card amount">
+        <div class="metric-value">\${{ metrics.totalApprovedAmount | number:'1.2-2' }}</div>
+        <div class="metric-label">Total Approved</div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <a routerLink="/expenses/new" class="action-btn primary">+ New Expense</a>
+      <a routerLink="/expenses" class="action-btn secondary">View All Expenses</a>
+    </div>
+  }
+</div>

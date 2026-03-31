@@ -1,0 +1,139 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/users",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/users",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/users/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/roles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/roles",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}/claims",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}/claims",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/roles/{id}/claims/{claimValue}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-user", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/roles/{id}/claims/{claimValue}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/expenses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}/approve",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}/approve",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/{id}/reject",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/{id}/reject",
+      "UpstreamHttpMethod": [ "PATCH" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/filter",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/filter",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/expenses/metrics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "expense-api", "Port": 8080 }
+      ],
+      "UpstreamPathTemplate": "/api/expenses/metrics",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://expense-gateway:8080"
+  }
+}

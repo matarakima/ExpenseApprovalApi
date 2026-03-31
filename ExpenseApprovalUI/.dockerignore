@@ -1,0 +1,9 @@
+node_modules
+dist
+.angular
+.git
+.vscode
+.gitignore
+*.md
+setup-jest.ts
+**/*.spec.ts
