@@ -58,13 +58,16 @@
 
       <div class="form-group">
         <label for="categoryId">Category</label>
-        <input
+        <select
           id="categoryId"
-          type="text"
           formControlName="categoryId"
-          placeholder="e.g. Travel"
           [class.invalid]="f['categoryId'].touched && f['categoryId'].invalid"
-        />
+        >
+          <option value="" disabled>Select a category</option>
+          @for (cat of categories; track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
         @if (f['categoryId'].touched && f['categoryId'].errors) {
           <div class="error-text">
             @if (f['categoryId'].errors['required']) { Category is required. }

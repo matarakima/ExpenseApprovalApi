@@ -15,7 +15,7 @@ public class CreateExpenseCommandHandler : IRequestHandler<CreateExpenseCommand,
 
     public async Task<ExpenseRequestDto> Handle(CreateExpenseCommand request, CancellationToken cancellationToken)
     {
-        var dto = new CreateExpenseRequestDto(request.CategoryId, request.Description, request.Amount, request.ExpenseDate);
-        return await _useCase.ExecuteAsync(dto, request.RequestedById);
+        var dto = new CreateExpenseRequestDto(request.CategoryId, request.Description, request.Amount, request.ExpenseDate, request.RequestedById);
+        return await _useCase.ExecuteAsync(dto);
     }
 }

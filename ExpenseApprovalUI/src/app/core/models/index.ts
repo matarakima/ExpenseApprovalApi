@@ -4,6 +4,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  userId: string;
   accessToken: string;
   tokenType: string;
   expiresIn: number;
@@ -11,15 +12,16 @@ export interface LoginResponse {
 
 export interface ExpenseRequest {
   id: string;
+  categoryId: string;
   category: string;
   description: string;
   amount: number;
   expenseDate: string;
-  requestedBy: string;
+  requestedById: string;
   status: string;
   createdAt: string;
   decisionDate: string | null;
-  decisionBy: string | null;
+  decisionById: string | null;
 }
 
 export interface CreateExpenseRequest {

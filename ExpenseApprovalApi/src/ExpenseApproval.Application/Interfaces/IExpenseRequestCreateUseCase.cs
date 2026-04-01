@@ -4,5 +4,5 @@ namespace ExpenseApproval.Application.Interfaces;
 
 public interface IExpenseRequestCreateUseCase
 {
-    Task<ExpenseRequestDto> ExecuteAsync(CreateExpenseRequestDto dto, Guid requestedById);
+    Task<ExpenseRequestDto> ExecuteAsync(CreateExpenseRequestDto dto);
 }

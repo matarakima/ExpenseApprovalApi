@@ -29,7 +29,7 @@ public class ExpenseRequestCreateUseCaseTests
     [Fact]
     public async Task ExecuteAsync_ValidRequest_ReturnsDto()
     {
-        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo tickets", 500m, DateTime.UtcNow.AddDays(-1));
+        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo tickets", 500m, DateTime.UtcNow.AddDays(-1), _requestedById);
         _repoMock.Setup(r => r.AddAsync(It.IsAny<ExpenseRequest>()))
             .ReturnsAsync((ExpenseRequest e) =>
             {
@@ -38,7 +38,7 @@ public class ExpenseRequestCreateUseCaseTests
                 return e;
             });
 
-        var result = await _useCase.ExecuteAsync(dto, _requestedById);
+        var result = await _useCase.ExecuteAsync(dto);
 
         result.Should().NotBeNull();
         result.Category.Should().Be("Viajes");
@@ -49,9 +49,9 @@ public class ExpenseRequestCreateUseCaseTests
     [Fact]
     public async Task ExecuteAsync_ZeroAmount_ThrowsValidation()
     {
-        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", 0m, DateTime.UtcNow.AddDays(-1));
+        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", 0m, DateTime.UtcNow.AddDays(-1), _requestedById);
 
-        var act = () => _useCase.ExecuteAsync(dto, _requestedById);
+        var act = () => _useCase.ExecuteAsync(dto);
 
         await act.Should().ThrowAsync<ValidationException>();
     }
@@ -59,9 +59,9 @@ public class ExpenseRequestCreateUseCaseTests
     [Fact]
     public async Task ExecuteAsync_NegativeAmount_ThrowsValidation()
     {
-        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", -100m, DateTime.UtcNow.AddDays(-1));
+        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", -100m, DateTime.UtcNow.AddDays(-1), _requestedById);
 
-        var act = () => _useCase.ExecuteAsync(dto, _requestedById);
+        var act = () => _useCase.ExecuteAsync(dto);
 
         await act.Should().ThrowAsync<ValidationException>();
     }
@@ -69,9 +69,9 @@ public class ExpenseRequestCreateUseCaseTests
     [Fact]
     public async Task ExecuteAsync_FutureDate_ThrowsValidation()
     {
-        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", 500m, DateTime.UtcNow.AddDays(10));
+        var dto = new CreateExpenseRequestDto(_categoryId, "Vuelo", 500m, DateTime.UtcNow.AddDays(10), _requestedById);
 
-        var act = () => _useCase.ExecuteAsync(dto, _requestedById);
+        var act = () => _useCase.ExecuteAsync(dto);
 
         await act.Should().ThrowAsync<ValidationException>();
     }
@@ -79,9 +79,9 @@ public class ExpenseRequestCreateUseCaseTests
     [Fact]
     public async Task ExecuteAsync_EmptyCategoryId_ThrowsValidation()
     {
-        var dto = new CreateExpenseRequestDto(Guid.Empty, "Vuelo", 500m, DateTime.UtcNow.AddDays(-1));
+        var dto = new CreateExpenseRequestDto(Guid.Empty, "Vuelo", 500m, DateTime.UtcNow.AddDays(-1), _requestedById);
 
-        var act = () => _useCase.ExecuteAsync(dto, _requestedById);
+        var act = () => _useCase.ExecuteAsync(dto);
 
         await act.Should().ThrowAsync<ValidationException>();
     }

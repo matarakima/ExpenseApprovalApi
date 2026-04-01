@@ -24,7 +24,7 @@ public class ExpenseRequestCreateUseCase : IExpenseRequestCreateUseCase
         _logger = logger;
     }
 
-    public async Task<ExpenseRequestDto> ExecuteAsync(CreateExpenseRequestDto dto, Guid requestedById)
+    public async Task<ExpenseRequestDto> ExecuteAsync(CreateExpenseRequestDto dto)
     {
         var validation = await _validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -37,13 +37,13 @@ public class ExpenseRequestCreateUseCase : IExpenseRequestCreateUseCase
             Description = dto.Description,
             Amount = dto.Amount,
             ExpenseDate = dto.ExpenseDate,
-            RequestedById = requestedById,
+            RequestedById = dto.RequestedById,
             Status = ExpenseStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
 
         var created = await _repository.AddAsync(entity);
-        _logger.LogInformation("Expense request {Id} created by {User}", created.Id, requestedById);
+        _logger.LogInformation("Expense request {Id} created by {User}", created.Id, dto.RequestedById);
         return ExpenseRequestMapper.MapToDto(created);
     }
 }

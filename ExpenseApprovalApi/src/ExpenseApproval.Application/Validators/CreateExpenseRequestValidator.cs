@@ -24,6 +24,9 @@ namespace ExpenseApproval.Application.Validators
             RuleFor(x => x.ExpenseDate)
                 .LessThanOrEqualTo(DateTime.UtcNow.Date.AddDays(1))
                 .WithMessage("Expense date cannot be in the future.");
+
+            RuleFor(x => x.RequestedById)
+                .NotEmpty().WithMessage("Requested by user is required.");
         }
     }
 }

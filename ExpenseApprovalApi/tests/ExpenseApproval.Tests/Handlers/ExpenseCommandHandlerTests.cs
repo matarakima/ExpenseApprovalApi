@@ -22,19 +22,18 @@ public class CreateExpenseCommandHandlerTests
         var categoryId = Guid.NewGuid();
         var requestedById = Guid.NewGuid();
         var expectedDto = new ExpenseRequestDto(
-            Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
-            "User", "Pending", DateTime.UtcNow, null, null);
+            Guid.NewGuid(), categoryId, "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
+            "User", requestedById, "Pending", DateTime.UtcNow, null, null, null);
 
         _useCaseMock.Setup(u => u.ExecuteAsync(
-            It.Is<CreateExpenseRequestDto>(d => d.CategoryId == categoryId && d.Amount == 500m),
-            requestedById))
+            It.Is<CreateExpenseRequestDto>(d => d.CategoryId == categoryId && d.Amount == 500m && d.RequestedById == requestedById)))
             .ReturnsAsync(expectedDto);
 
         var command = new CreateExpenseCommand(categoryId, "Flight", 500m, DateTime.UtcNow.AddDays(-1), requestedById);
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Should().Be(expectedDto);
-        _useCaseMock.Verify(u => u.ExecuteAsync(It.IsAny<CreateExpenseRequestDto>(), requestedById), Times.Once);
+        _useCaseMock.Verify(u => u.ExecuteAsync(It.IsAny<CreateExpenseRequestDto>()), Times.Once);
     }
 }
 
@@ -54,8 +53,8 @@ public class UpdateExpenseCommandHandlerTests
         var id = Guid.NewGuid();
         var categoryId = Guid.NewGuid();
         var expectedDto = new ExpenseRequestDto(
-            id, "Office", "Supplies", 200m, DateTime.UtcNow.AddDays(-1),
-            "User", "Pending", DateTime.UtcNow, null, null);
+            id, categoryId, "Office", "Supplies", 200m, DateTime.UtcNow.AddDays(-1),
+            "User", Guid.NewGuid(), "Pending", DateTime.UtcNow, null, null, null);
 
         _useCaseMock.Setup(u => u.ExecuteAsync(
             id,
@@ -86,8 +85,8 @@ public class ApproveExpenseCommandHandlerTests
         var id = Guid.NewGuid();
         var decisionById = Guid.NewGuid();
         var expectedDto = new ExpenseRequestDto(
-            id, "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
-            "User", "Approved", DateTime.UtcNow, DateTime.UtcNow, "Approver");
+            id, Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
+            "User", Guid.NewGuid(), "Approved", DateTime.UtcNow, DateTime.UtcNow, "Approver", decisionById);
 
         _useCaseMock.Setup(u => u.ExecuteAsync(id, decisionById))
             .ReturnsAsync(expectedDto);
@@ -117,8 +116,8 @@ public class RejectExpenseCommandHandlerTests
         var id = Guid.NewGuid();
         var decisionById = Guid.NewGuid();
         var expectedDto = new ExpenseRequestDto(
-            id, "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
-            "User", "Rejected", DateTime.UtcNow, DateTime.UtcNow, "Rejector");
+            id, Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow.AddDays(-1),
+            "User", Guid.NewGuid(), "Rejected", DateTime.UtcNow, DateTime.UtcNow, "Rejector", decisionById);
 
         _useCaseMock.Setup(u => u.ExecuteAsync(id, decisionById))
             .ReturnsAsync(expectedDto);

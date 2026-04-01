@@ -2,17 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ExpenseService } from './expense.service';
+import { AuthService } from './auth.service';
 
 describe('ExpenseService', () => {
   let service: ExpenseService;
   let httpMock: HttpTestingController;
+  const mockAuthService = { userId: 'user-123', token: 'tok', isAuthenticated: true };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        ExpenseService
+        ExpenseService,
+        { provide: AuthService, useValue: mockAuthService }
       ]
     });
 
@@ -74,19 +77,21 @@ describe('ExpenseService', () => {
     req.flush({});
   });
 
-  it('approve sends PATCH', () => {
+  it('approve sends PATCH with decisionById', () => {
     service.approve('x1').subscribe();
 
-    const req = httpMock.expectOne((r) => r.url.endsWith('/expenses/x1/approve'));
+    const req = httpMock.expectOne((r) => r.url.includes('/expenses/x1/approve'));
     expect(req.request.method).toBe('PATCH');
+    expect(req.request.params.get('decisionById')).toBe('user-123');
     req.flush({});
   });
 
-  it('reject sends PATCH', () => {
+  it('reject sends PATCH with decisionById', () => {
     service.reject('x1').subscribe();
 
-    const req = httpMock.expectOne((r) => r.url.endsWith('/expenses/x1/reject'));
+    const req = httpMock.expectOne((r) => r.url.includes('/expenses/x1/reject'));
     expect(req.request.method).toBe('PATCH');
+    expect(req.request.params.get('decisionById')).toBe('user-123');
     req.flush({});
   });
 

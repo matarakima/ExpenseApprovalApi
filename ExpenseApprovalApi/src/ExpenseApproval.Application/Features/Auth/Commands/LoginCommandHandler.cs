@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using ExpenseApproval.Application.DTOs;
+using ExpenseApproval.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
@@ -10,23 +11,25 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDt
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
+    private readonly IUserRepository _userRepository;
 
-    public LoginCommandHandler(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public LoginCommandHandler(IHttpClientFactory httpClientFactory, IConfiguration configuration, IUserRepository userRepository)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
+        _userRepository = userRepository;
     }
 
     public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var domain = _configuration["Auth0:Domain"]
-            ?? throw new InvalidOperationException("Auth0:Domain is not configured.");
-        var clientId = _configuration["Auth0:ClientId"]
-            ?? throw new InvalidOperationException("Auth0:ClientId is not configured.");
-        var clientSecret = _configuration["Auth0:ClientSecret"]
-            ?? throw new InvalidOperationException("Auth0:ClientSecret is not configured.");
-        var audience = _configuration["Auth0:Audience"]
-            ?? throw new InvalidOperationException("Auth0:Audience is not configured.");
+        var domain = _configuration["AuthDomain"]
+            ?? throw new InvalidOperationException("AuthDomain is not configured.");
+        var clientId = _configuration["AutClientId"]
+            ?? throw new InvalidOperationException("AutClientId is not configured.");
+        var clientSecret = _configuration["AuthClientSecret"]
+            ?? throw new InvalidOperationException("AuthClientSecret is not configured.");
+        var audience = _configuration["AuthAudience"]
+            ?? throw new InvalidOperationException("AuthAudience is not configured.");
 
         var client = _httpClientFactory.CreateClient();
 
@@ -52,7 +55,10 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDt
         var tokenResponse = await response.Content.ReadFromJsonAsync<Auth0TokenResponse>(cancellationToken)
             ?? throw new InvalidOperationException("Failed to deserialize Auth0 token response.");
 
-        return new LoginResponseDto(tokenResponse.AccessToken, tokenResponse.TokenType, tokenResponse.ExpiresIn);
+        var user = await _userRepository.GetByEmailAsync(request.Email);
+        var userId = user?.Id ?? Guid.Empty;
+
+        return new LoginResponseDto(userId, tokenResponse.AccessToken, tokenResponse.TokenType, tokenResponse.ExpiresIn);
     }
 
     private sealed class Auth0TokenResponse

@@ -11,7 +11,7 @@ describe('authInterceptor', () => {
   let authService: AuthService;
 
   beforeEach(() => {
-    localStorage.clear();
+    sessionStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -29,11 +29,11 @@ describe('authInterceptor', () => {
 
   afterEach(() => {
     httpMock.verify();
-    localStorage.clear();
+    sessionStorage.clear();
   });
 
   it('adds Authorization header when token exists', () => {
-    authService.setToken('my-token');
+    authService.setSession('my-token', 'u1');
 
     http.get('/api/test').subscribe();
 
@@ -58,7 +58,7 @@ describe('errorInterceptor', () => {
   let authService: AuthService;
 
   beforeEach(() => {
-    localStorage.clear();
+    sessionStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -77,7 +77,7 @@ describe('errorInterceptor', () => {
 
   afterEach(() => {
     httpMock.verify();
-    localStorage.clear();
+    sessionStorage.clear();
   });
 
   it('shows error notification on 400', () => {

@@ -10,6 +10,7 @@ namespace ExpenseApproval.Domain.Interfaces
     public interface IUserRepository
     {
         Task<AppUser?> GetByAuth0IdAsync(string auth0Id);
+        Task<AppUser?> GetByEmailAsync(string email);
         Task<AppUser?> GetByIdAsync(Guid id);
         Task<IEnumerable<AppUser>> GetAllAsync();
         Task<AppUser> AddAsync(AppUser user);

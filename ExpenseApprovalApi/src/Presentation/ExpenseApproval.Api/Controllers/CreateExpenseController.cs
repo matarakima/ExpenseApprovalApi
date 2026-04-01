@@ -40,8 +40,7 @@ public class CreateExpenseController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create([FromBody] CreateExpenseRequestDto dto)
     {
-        // TODO: resolve AppUser Id from auth0 sub
-        var command = new CreateExpenseCommand(dto.CategoryId, dto.Description, dto.Amount, dto.ExpenseDate, Guid.Empty);
+        var command = new CreateExpenseCommand(dto.CategoryId, dto.Description, dto.Amount, dto.ExpenseDate, dto.RequestedById);
         var result = await _mediator.Send(command);
         return Created($"/api/expenses/{result.Id}", result);
     }

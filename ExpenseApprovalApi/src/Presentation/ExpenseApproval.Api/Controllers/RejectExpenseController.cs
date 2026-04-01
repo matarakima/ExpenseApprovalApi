@@ -26,6 +26,7 @@ public class RejectExpenseController : ControllerBase
     /// Rejects a pending expense request by its identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the expense request to reject.</param>
+    /// <param name="decisionById">The unique identifier of the user making the decision.</param>
     /// <returns>The rejected expense request.</returns>
     /// <response code="200">Expense request rejected successfully.</response>
     /// <response code="401">Unauthorized. JWT token is missing or invalid.</response>
@@ -35,10 +36,9 @@ public class RejectExpenseController : ControllerBase
     [ProducesResponseType(typeof(ExpenseRequestDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Reject(Guid id)
+    public async Task<IActionResult> Reject(Guid id, [FromQuery] Guid decisionById)
     {
-        // TODO: resolve AppUser Id from auth0 sub
-        var command = new RejectExpenseCommand(id, Guid.Empty);
+        var command = new RejectExpenseCommand(id, decisionById);
         var result = await _mediator.Send(command);
         return Ok(result);
     }

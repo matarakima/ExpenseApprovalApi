@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ExpenseService } from '../../core/services/expense.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { Category } from '../../core/models';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-expense-form',
@@ -18,13 +20,15 @@ export class ExpenseFormComponent implements OnInit {
   expenseId: string | null = null;
   loading = false;
   pageLoading = true;
+  categories: Category[] = [];
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private expenseService: ExpenseService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +36,13 @@ export class ExpenseFormComponent implements OnInit {
       description: ['', [Validators.required, Validators.maxLength(500)]],
       amount: [null, [Validators.required, Validators.min(0.01)]],
       expenseDate: ['', Validators.required],
-      categoryId: ['', Validators.required]
+      categoryId: ['', Validators.required],
+      requestedById: [this.authService.userId, Validators.required]
+    });
+
+    this.expenseService.getCategories().subscribe({
+      next: (cats: Category[]) => this.categories = cats,
+      error: () => this.notification.error('Failed to load categories.')
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -50,7 +60,8 @@ export class ExpenseFormComponent implements OnInit {
             description: exp.description,
             amount: exp.amount,
             expenseDate: exp.expenseDate?.split('T')[0],
-            categoryId: exp.category
+            categoryId: exp.categoryId,
+            requestedById: this.authService.userId
           });
           this.pageLoading = false;
         },

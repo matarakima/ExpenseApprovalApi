@@ -7,14 +7,16 @@ import {
   CreateExpenseRequest,
   UpdateExpenseRequest,
   ExpenseMetrics,
-  ExpenseFilter
+  ExpenseFilter,
+  Category
 } from '../models';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ExpenseService {
   private readonly url = `${environment.apiUrl}/expenses`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getAll(): Observable<ExpenseRequest[]> {
     return this.http.get<ExpenseRequest[]>(this.url);
@@ -33,11 +35,13 @@ export class ExpenseService {
   }
 
   approve(id: string): Observable<ExpenseRequest> {
-    return this.http.patch<ExpenseRequest>(`${this.url}/${id}/approve`, {});
+    const params = new HttpParams().set('decisionById', this.authService.userId ?? '');
+    return this.http.patch<ExpenseRequest>(`${this.url}/${id}/approve`, {}, { params });
   }
 
   reject(id: string): Observable<ExpenseRequest> {
-    return this.http.patch<ExpenseRequest>(`${this.url}/${id}/reject`, {});
+    const params = new HttpParams().set('decisionById', this.authService.userId ?? '');
+    return this.http.patch<ExpenseRequest>(`${this.url}/${id}/reject`, {}, { params });
   }
 
   filter(filters: ExpenseFilter): Observable<ExpenseRequest[]> {
@@ -52,4 +56,9 @@ export class ExpenseService {
   getMetrics(): Observable<ExpenseMetrics> {
     return this.http.get<ExpenseMetrics>(`${this.url}/metrics`);
   }
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${environment.apiUrl}/categories`);
+  }
+
 }

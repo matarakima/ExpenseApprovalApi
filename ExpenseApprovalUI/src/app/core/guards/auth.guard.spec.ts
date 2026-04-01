@@ -9,7 +9,7 @@ describe('authGuard', () => {
 
   beforeEach(() => {
     routerSpy = { navigate: jest.fn() } as unknown as jest.Mocked<Router>;
-    localStorage.clear();
+    sessionStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -21,10 +21,10 @@ describe('authGuard', () => {
     authService = TestBed.inject(AuthService);
   });
 
-  afterEach(() => localStorage.clear());
+  afterEach(() => sessionStorage.clear());
 
   it('returns true when authenticated', () => {
-    authService.setToken('t');
+    authService.setSession('t', 'u');
     const result = TestBed.runInInjectionContext(() =>
       authGuard({} as any, {} as any)
     );
@@ -46,7 +46,7 @@ describe('loginGuard', () => {
 
   beforeEach(() => {
     routerSpy = { navigate: jest.fn() } as unknown as jest.Mocked<Router>;
-    localStorage.clear();
+    sessionStorage.clear();
 
     TestBed.configureTestingModule({
       providers: [
@@ -58,7 +58,7 @@ describe('loginGuard', () => {
     authService = TestBed.inject(AuthService);
   });
 
-  afterEach(() => localStorage.clear());
+  afterEach(() => sessionStorage.clear());
 
   it('returns true when NOT authenticated', () => {
     const result = TestBed.runInInjectionContext(() =>
@@ -68,7 +68,7 @@ describe('loginGuard', () => {
   });
 
   it('redirects to /dashboard when authenticated', () => {
-    authService.setToken('t');
+    authService.setSession('t', 'u');
     const result = TestBed.runInInjectionContext(() =>
       loginGuard({} as any, {} as any)
     );

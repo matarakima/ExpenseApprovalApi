@@ -5,18 +5,21 @@ import { provideRouter, ActivatedRoute, Router } from '@angular/router';
 import { ExpenseFormComponent } from './expense-form.component';
 import { ExpenseService } from '../../core/services/expense.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core/services/auth.service';
 import { of, throwError } from 'rxjs';
 
 describe('ExpenseFormComponent - Create Mode', () => {
   let expenseServiceSpy: jest.Mocked<ExpenseService>;
   let notificationSpy: jest.Mocked<NotificationService>;
   let router: Router;
+  const mockAuthService = { userId: 'user-123', token: 'tok', isAuthenticated: true, isLoggedIn$: of(true) };
 
   beforeEach(async () => {
     expenseServiceSpy = {
       create: jest.fn().mockReturnValue(of({ id: 'new1' })),
       update: jest.fn(),
-      getById: jest.fn()
+      getById: jest.fn(),
+      getCategories: jest.fn().mockReturnValue(of([{ id: 'cat1', name: 'Travel' }]))
     } as unknown as jest.Mocked<ExpenseService>;
 
     notificationSpy = {
@@ -32,6 +35,7 @@ describe('ExpenseFormComponent - Create Mode', () => {
         provideRouter([]),
         { provide: ExpenseService, useValue: expenseServiceSpy },
         { provide: NotificationService, useValue: notificationSpy },
+        { provide: AuthService, useValue: mockAuthService },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => null } } }
@@ -115,16 +119,18 @@ describe('ExpenseFormComponent - Edit Mode', () => {
   let expenseServiceSpy: jest.Mocked<ExpenseService>;
   let notificationSpy: jest.Mocked<NotificationService>;
   let router: Router;
+  const mockAuthService = { userId: 'user-123', token: 'tok', isAuthenticated: true, isLoggedIn$: of(true) };
 
   beforeEach(async () => {
     expenseServiceSpy = {
       getById: jest.fn().mockReturnValue(of({
-        id: 'e1', category: 'Travel', description: 'Flight', amount: 200,
+        id: 'e1', categoryId: 'cat1', category: 'Travel', description: 'Flight', amount: 200,
         expenseDate: '2025-01-01T00:00:00', requestedBy: 'U', status: 'Pending',
         createdAt: '2025-01-01', decisionDate: null, decisionBy: null
       })),
       update: jest.fn().mockReturnValue(of({ id: 'e1' })),
-      create: jest.fn()
+      create: jest.fn(),
+      getCategories: jest.fn().mockReturnValue(of([{ id: 'cat1', name: 'Travel' }]))
     } as unknown as jest.Mocked<ExpenseService>;
 
     notificationSpy = {
@@ -140,6 +146,7 @@ describe('ExpenseFormComponent - Edit Mode', () => {
         provideRouter([]),
         { provide: ExpenseService, useValue: expenseServiceSpy },
         { provide: NotificationService, useValue: notificationSpy },
+        { provide: AuthService, useValue: mockAuthService },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => 'e1' } } }

@@ -13,7 +13,7 @@ export class LoginService {
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.url}/login`, request).pipe(
-      tap(response => this.authService.setToken(response.accessToken))
+      tap(response => this.authService.setSession(response.accessToken, response.userId))
     );
   }
 }

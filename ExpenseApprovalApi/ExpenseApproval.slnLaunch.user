@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\Presentation\\ExpenseApproval.Api\\ExpenseApproval.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Presentation\\ExpenseApproval.User\\ExpenseApproval.User.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Presentation\\ExpenseApproval.Gateway\\ExpenseApproval.Gateway.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

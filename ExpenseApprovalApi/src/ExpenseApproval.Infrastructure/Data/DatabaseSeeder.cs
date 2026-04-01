@@ -15,6 +15,7 @@ namespace ExpenseApproval.Infrastructure.Data
         public static async Task SeedAsync(AppDbContext context, ILogger logger)
         {
             await context.Database.MigrateAsync();
+
             logger.LogInformation("Database migrated successfully.");
 
             if (await context.AppRoles.AnyAsync())

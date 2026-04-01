@@ -11,7 +11,7 @@ describe('LoginService', () => {
 
   beforeEach(() => {
     authServiceSpy = {
-      setToken: jest.fn()
+      setSession: jest.fn()
     } as unknown as jest.Mocked<AuthService>;
 
     TestBed.configureTestingModule({
@@ -34,7 +34,7 @@ describe('LoginService', () => {
   });
 
   it('login sends POST and stores token', () => {
-    const mockResponse = { accessToken: 'abc', tokenType: 'Bearer', expiresIn: 3600 };
+    const mockResponse = { userId: 'u1', accessToken: 'abc', tokenType: 'Bearer', expiresIn: 3600 };
 
     service.login({ email: 'a@b.com', password: '123456' }).subscribe((res) => {
       expect(res.accessToken).toBe('abc');
@@ -45,7 +45,7 @@ describe('LoginService', () => {
     expect(req.request.body).toEqual({ email: 'a@b.com', password: '123456' });
     req.flush(mockResponse);
 
-    expect(authServiceSpy.setToken).toHaveBeenCalledWith('abc');
+    expect(authServiceSpy.setSession).toHaveBeenCalledWith('abc', 'u1');
   });
 
   it('login propagates HTTP error', () => {

@@ -131,6 +131,17 @@
       "UpstreamPathTemplate": "/api/expenses/metrics",
       "UpstreamHttpMethod": [ "GET" ],
       "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/categories",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 7221 }
+      ],
+      "UpstreamPathTemplate": "/api/categories",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DelegatingHandlers": [ "JwtValidationDelegatingHandler" ]
     }
   ],
   "GlobalConfiguration": {

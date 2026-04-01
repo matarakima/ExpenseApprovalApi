@@ -15,8 +15,8 @@ describe('ExpenseDetailComponent', () => {
 
   const mockExpense: ExpenseRequest = {
     id: 'e1', category: 'Travel', description: 'Flight', amount: 200,
-    expenseDate: '2025-01-01', requestedBy: 'User', status: 'Pending',
-    createdAt: '2025-01-01', decisionDate: null, decisionBy: null
+    expenseDate: '2025-01-01', requestedById: 'User', status: 'Pending',
+    createdAt: '2025-01-01', decisionDate: null, decisionById: null
   };
 
   function setup(expense: ExpenseRequest | null = mockExpense, paramId = 'e1') {

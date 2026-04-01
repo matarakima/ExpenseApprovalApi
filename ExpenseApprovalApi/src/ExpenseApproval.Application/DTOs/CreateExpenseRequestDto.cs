@@ -10,6 +10,7 @@ namespace ExpenseApproval.Application.DTOs
         Guid CategoryId,
         string Description,
         decimal Amount,
-        DateTime ExpenseDate
+        DateTime ExpenseDate,
+        Guid RequestedById
     );
 }

@@ -4,6 +4,7 @@ using ExpenseApproval.Domain.Interfaces;
 using ExpenseApproval.Infrastructure.Data;
 using ExpenseApproval.Infrastructure.Repositories;
 using FluentValidation;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +13,12 @@ namespace ExpenseApproval.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string connectionString)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            }
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString, sql =>
                     sql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
@@ -25,6 +27,7 @@ namespace ExpenseApproval.Infrastructure
             services.AddScoped<IExpenseRequestRepository, ExpenseRequestRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // Expense Request UseCases
             services.AddScoped<IExpenseRequestGetAllUseCase, ExpenseRequestGetAllUseCase>();
@@ -38,6 +41,9 @@ namespace ExpenseApproval.Infrastructure
 
             // Role UseCases
             services.AddScoped<IRoleGetAllUseCase, RoleGetAllUseCase>();
+
+            // Category UseCases
+            services.AddScoped<ICategoryGetAllUseCase, CategoryGetAllUseCase>();
             services.AddScoped<IRoleGetByIdUseCase, RoleGetByIdUseCase>();
             services.AddScoped<IRoleCreateUseCase, RoleCreateUseCase>();
             services.AddScoped<IRoleAddClaimUseCase, RoleAddClaimUseCase>();

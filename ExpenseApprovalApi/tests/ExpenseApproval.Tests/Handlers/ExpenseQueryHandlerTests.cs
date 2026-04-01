@@ -21,8 +21,8 @@ public class GetAllExpensesQueryHandlerTests
     {
         var expenses = new List<ExpenseRequestDto>
         {
-            new(Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow, "User", "Pending", DateTime.UtcNow, null, null),
-            new(Guid.NewGuid(), "Office", "Supplies", 100m, DateTime.UtcNow, "User", "Approved", DateTime.UtcNow, DateTime.UtcNow, "Admin")
+            new(Guid.NewGuid(), Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow, "User", Guid.NewGuid(), "Pending", DateTime.UtcNow, null, null, null),
+            new(Guid.NewGuid(), Guid.NewGuid(), "Office", "Supplies", 100m, DateTime.UtcNow, "User", Guid.NewGuid(), "Approved", DateTime.UtcNow, DateTime.UtcNow, "Admin", Guid.NewGuid())
         };
 
         _useCaseMock.Setup(u => u.ExecuteAsync()).ReturnsAsync(expenses);
@@ -58,7 +58,7 @@ public class GetExpenseByIdQueryHandlerTests
     public async Task Handle_Found_ReturnsDto()
     {
         var id = Guid.NewGuid();
-        var dto = new ExpenseRequestDto(id, "Travel", "Flight", 500m, DateTime.UtcNow, "User", "Pending", DateTime.UtcNow, null, null);
+        var dto = new ExpenseRequestDto(id, Guid.NewGuid(), "Travel", "Flight", 500m, DateTime.UtcNow, "User", Guid.NewGuid(), "Pending", DateTime.UtcNow, null, null, null);
         _useCaseMock.Setup(u => u.ExecuteAsync(id)).ReturnsAsync(dto);
 
         var result = await _handler.Handle(new GetExpenseByIdQuery(id), CancellationToken.None);

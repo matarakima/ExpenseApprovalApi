@@ -7,14 +7,17 @@ public static class ExpenseRequestMapper
 {
     public static ExpenseRequestDto MapToDto(ExpenseRequest e) => new(
         e.Id,
+        e.CategoryId,
         e.Category?.Name ?? string.Empty,
         e.Description,
         e.Amount,
         e.ExpenseDate,
         e.RequestedBy?.FullName ?? string.Empty,
+        e.RequestedById,
         e.Status.ToString(),
         e.CreatedAt,
         e.DecisionDate,
-        e.DecisionBy?.FullName
+        e.DecisionBy?.FullName,
+        e.DecisionById
     );
 }

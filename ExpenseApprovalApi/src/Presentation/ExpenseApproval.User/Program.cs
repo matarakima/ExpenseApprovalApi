@@ -12,46 +12,34 @@ var builder = WebApplication.CreateBuilder(args);
 // ---------- Azure Key Vault ----------
 var vaultUrl = builder.Configuration["KeyVault:VaultUrl"]
     ?? Environment.GetEnvironmentVariable("VAULT_URL");
+
+var tenantId = builder.Configuration["KeyVault:tenantId"]
+    ?? Environment.GetEnvironmentVariable("TENANT_ID");
+
+var clientId = builder.Configuration["KeyVault:applicationId"]
+    ?? Environment.GetEnvironmentVariable("APPLICATION_ID");
+
+var clientSecret = builder.Configuration["KeyVault:clientSecret"]
+    ?? Environment.GetEnvironmentVariable("CLIENT_SECRET");
 if (!string.IsNullOrEmpty(vaultUrl))
 {
     builder.Configuration.AddAzureKeyVault(
         new Uri(vaultUrl),
-        new DefaultAzureCredential());
+        new ClientSecretCredential(
+            tenantId,
+            clientId,
+            clientSecret
+        ));
 }
-
 // ---------- Configuration overrides from environment variables ----------
 // (fallback for local development or Docker without Key Vault)
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-if (!string.IsNullOrEmpty(connectionString))
-    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
-
-var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN");
-if (!string.IsNullOrEmpty(auth0Domain))
-    builder.Configuration["Auth0:Domain"] = auth0Domain;
-
-var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
-if (!string.IsNullOrEmpty(auth0Audience))
-    builder.Configuration["Auth0:Audience"] = auth0Audience;
-
-var auth0ClientId = Environment.GetEnvironmentVariable("AUTH0_CLIENT_ID");
-if (!string.IsNullOrEmpty(auth0ClientId))
-    builder.Configuration["Auth0:ClientId"] = auth0ClientId;
-
-var auth0ClientSecret = Environment.GetEnvironmentVariable("AUTH0_CLIENT_SECRET");
-if (!string.IsNullOrEmpty(auth0ClientSecret))
-    builder.Configuration["Auth0:ClientSecret"] = auth0ClientSecret;
-
-// If SQL SA password comes from Key Vault, inject it into the connection string
-var sqlSaPassword = builder.Configuration["Sql:SaPassword"];
-if (!string.IsNullOrEmpty(sqlSaPassword))
-{
-    var connStr = builder.Configuration.GetConnectionString("DefaultConnection")!;
-    var connBuilder = new SqlConnectionStringBuilder(connStr) { Password = sqlSaPassword };
-    builder.Configuration["ConnectionStrings:DefaultConnection"] = connBuilder.ConnectionString;
-}
-
+var connectionString = builder.Configuration["ConnectionString"];
+var auth0Domain = builder.Configuration["AuthDomain"];
+var auth0Audience = builder.Configuration["AuthAudience"];
+var auth0ClientId = builder.Configuration["AutClientId"];
+var auth0ClientSecret = builder.Configuration["AuthClientSecret"];
 // ---------- Services ----------
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, connectionString??string.Empty);
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(ExpenseApproval.Application.Features.Users.Queries.GetAllUsersQuery).Assembly));
 
@@ -96,15 +84,12 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Auth0 JWT Authentication
-var domain = builder.Configuration["Auth0:Domain"]!;
-var audience = builder.Configuration["Auth0:Audience"]!;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://{domain}/";
-        options.Audience = audience;
+        options.Authority = $"https://{auth0Domain}/";
+        options.Audience = auth0Audience;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,

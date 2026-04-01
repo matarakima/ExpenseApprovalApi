@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using ExpenseApproval.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,35 +11,38 @@ var builder = WebApplication.CreateBuilder(args);
 // ---------- Azure Key Vault ----------
 var vaultUrl = builder.Configuration["KeyVault:VaultUrl"]
     ?? Environment.GetEnvironmentVariable("VAULT_URL");
+
+var tenantId = builder.Configuration["KeyVault:tenantId"]
+    ?? Environment.GetEnvironmentVariable("TENANT_ID");
+
+var clientId = builder.Configuration["KeyVault:applicationId"]
+    ?? Environment.GetEnvironmentVariable("APPLICATION_ID");
+
+var clientSecret = builder.Configuration["KeyVault:clientSecret"]
+    ?? Environment.GetEnvironmentVariable("CLIENT_SECRET");
 if (!string.IsNullOrEmpty(vaultUrl))
 {
     builder.Configuration.AddAzureKeyVault(
         new Uri(vaultUrl),
-        new DefaultAzureCredential());
+        new ClientSecretCredential(
+            tenantId,
+            clientId,
+            clientSecret
+        ));
 }
 
-// ---------- Configuration overrides from environment variables ----------
-// (fallback for local development or Docker without Key Vault)
-var auth0Domain = Environment.GetEnvironmentVariable("AUTH0_DOMAIN");
-if (!string.IsNullOrEmpty(auth0Domain))
-    builder.Configuration["Auth0:Domain"] = auth0Domain;
+var auth0Domain = builder.Configuration["AuthDomain"];
+var auth0Audience = builder.Configuration["AuthAudience"];
 
-var auth0Audience = Environment.GetEnvironmentVariable("AUTH0_AUDIENCE");
-if (!string.IsNullOrEmpty(auth0Audience))
-    builder.Configuration["Auth0:Audience"] = auth0Audience;
-
-// ---------- Ocelot configuration ----------
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-// ---------- Auth0 JWT Authentication ----------
-var domain = builder.Configuration["Auth0:Domain"]!;
-var audience = builder.Configuration["Auth0:Audience"]!;
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://{domain}/";
-        options.Audience = audience;
+        options.Authority = $"https://{auth0Domain}/";
+        options.Audience = auth0Audience;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,

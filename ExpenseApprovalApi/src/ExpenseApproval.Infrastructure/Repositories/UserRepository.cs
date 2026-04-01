@@ -20,6 +20,9 @@ namespace ExpenseApproval.Infrastructure.Repositories
             => await _context.AppUsers.Include(u => u.Role).ThenInclude(r => r.Claims)
                 .FirstOrDefaultAsync(u => u.Auth0Id == auth0Id);
 
+        public async Task<AppUser?> GetByEmailAsync(string email)
+            => await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == email);
+
         public async Task<AppUser?> GetByIdAsync(Guid id)
             => await _context.AppUsers.Include(u => u.Role).ThenInclude(r => r.Claims)
                 .FirstOrDefaultAsync(u => u.Id == id);

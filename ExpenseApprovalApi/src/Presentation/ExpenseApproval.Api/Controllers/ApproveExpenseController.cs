@@ -26,6 +26,7 @@ public class ApproveExpenseController : ControllerBase
     /// Approves a pending expense request by its identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the expense request to approve.</param>
+    /// <param name="decisionById">The unique identifier of the user making the decision.</param>
     /// <returns>The approved expense request.</returns>
     /// <response code="200">Expense request approved successfully.</response>
     /// <response code="401">Unauthorized. JWT token is missing or invalid.</response>
@@ -35,10 +36,9 @@ public class ApproveExpenseController : ControllerBase
     [ProducesResponseType(typeof(ExpenseRequestDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Approve(Guid id)
+    public async Task<IActionResult> Approve(Guid id, [FromQuery] Guid decisionById)
     {
-        // TODO: resolve AppUser Id from auth0 sub
-        var command = new ApproveExpenseCommand(id, Guid.Empty);
+        var command = new ApproveExpenseCommand(id, decisionById);
         var result = await _mediator.Send(command);
         return Ok(result);
     }
